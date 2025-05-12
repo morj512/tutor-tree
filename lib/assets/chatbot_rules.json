@@ -1,0 +1,35 @@
+[
+    {
+      "keywords": ["álgebra", "ecuaciones", "variables", "matrices", "sistemas de ecuaciones", "polinomios"],
+      "recommendation": "Te recomiendo estudiar Estructuras Algebraicas."
+    },
+    {
+      "keywords": ["geometría", "ángulos", "figuras", "triángulos", "polígonos", "coordenadas"],
+      "recommendation": "Te recomiendo Geometría Analítica y Euclidiana."
+    },
+    {
+      "keywords": ["trigonometría", "senos", "cosenos", "tangentes", "identidades trigonométricas"],
+      "recommendation": "Te recomiendo repasar Funciones Trigonométricas y Aplicaciones."
+    },
+    {
+      "keywords": ["cálculo", "derivadas", "integrales", "límites", "series", "continuidad"],
+      "recommendation": "Te recomiendo Cálculo Diferencial e Integral."
+    },
+    {
+      "keywords": ["estadística", "probabilidad", "análisis de datos", "medias", "moda", "distribuciones"],
+      "recommendation": "Te recomiendo Análisis Estadístico y Probabilístico."
+    },
+    {
+      "keywords": ["física", "movimiento", "velocidad", "aceleración", "fuerza", "energía", "óptica", "electricidad", "magnetismo"],
+      "recommendation": "Te recomiendo Física: Dinámica, Cinemática y Electromagnetismo."
+    },
+    {
+      "keywords": ["lógica", "matemáticas discretas", "proposiciones", "conjuntos", "teoría de grafos"],
+      "recommendation": "Te recomiendo estudiar Lógica Matemática y Teoría de Grafos."
+    },
+    {
+      "keywords": ["números", "teoría de números", "divisibilidad", "números primos"],
+      "recommendation": "Te recomiendo Análisis Numérico y Teoría de Números."
+    }
+  ]
+  

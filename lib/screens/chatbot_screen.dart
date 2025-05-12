@@ -1,96 +1,101 @@
 import 'package:flutter/material.dart';
+import 'package:tutor_tree/services/gemini_service.dart';
 
 class ChatbotScreen extends StatefulWidget {
   const ChatbotScreen({super.key});
 
   @override
-  _ChatbotScreenState createState() => _ChatbotScreenState();
+  State<ChatbotScreen> createState() => _ChatbotScreenState();
 }
 
 class _ChatbotScreenState extends State<ChatbotScreen> {
-  final List<Map<String, String>> _messages = [];
   final TextEditingController _controller = TextEditingController();
+  final List<Map<String, String>> _messages = [];
+  final GeminiService _geminiService = GeminiService();
 
-  void _sendMessage() {
-    if (_controller.text.isNotEmpty) {
-      setState(() {
-        // Agrega el mensaje del usuario
-        _messages.add({
-          'sender': 'user',
-          'message': _controller.text,
-        });
+  bool _isLoading = false;
 
-        // Respuesta del bot (puedes hacerla más dinámica con un backend o AI más tarde)
-        _messages.add({
-          'sender': 'bot',
-          'message': "Hola, ¿cómo puedo ayudarte con tu curso?",
-        });
-      });
+  void _sendMessage() async {
+    final input = _controller.text.trim();
+    if (input.isEmpty) return;
 
+    setState(() {
+      _messages.add({'role': 'usuario', 'text': input});
       _controller.clear();
+      _isLoading = true;
+    });
+
+    try {
+      final response = await _geminiService.sendMessage(input);
+      setState(() {
+        _messages.add({'role': 'gemini', 'text': response});
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _messages.add({'role': 'gemini', 'text': '❌ Error: ${e.toString()}'});
+        _isLoading = false;
+      });
     }
+  }
+
+  Widget _buildMessage(Map<String, String> message) {
+    final isUser = message['role'] == 'usuario';
+    return Container(
+      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      child: Container(
+        decoration: BoxDecoration(
+          color: isUser ? Colors.blue[100] : Colors.green[100],
+          borderRadius: BorderRadius.circular(16),
+        ),
+        padding: const EdgeInsets.all(12),
+        child: Text(
+          message['text'] ?? '',
+          style: const TextStyle(fontSize: 16),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chatbot - Tutor Tree'),
+        title: const Text('Tutor IA Gemini'),
+        backgroundColor: Colors.teal,
       ),
       body: Column(
         children: [
           Expanded(
             child: ListView.builder(
+              padding: const EdgeInsets.all(8),
               itemCount: _messages.length,
-              itemBuilder: (context, index) {
-                final message = _messages[index];
-                bool isUserMessage = message['sender'] == 'user';
-
-                return Align(
-                  alignment: isUserMessage
-                      ? Alignment.centerRight
-                      : Alignment.centerLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Container(
-                      padding: const EdgeInsets.all(12.0),
-                      margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                      decoration: BoxDecoration(
-                        color: isUserMessage
-                            ? Colors.blue[200]
-                            : Colors.grey[300],
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        message['message']!,
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ),
-                );
-              },
+              itemBuilder: (context, index) =>
+                  _buildMessage(_messages[index]),
             ),
           ),
+          if (_isLoading)
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: CircularProgressIndicator(),
+            ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: _controller,
-                    decoration: InputDecoration(
-                      hintText: 'Escribe tu mensaje...',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide.none,
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[200],
+                    decoration: const InputDecoration(
+                      hintText: 'Escribe tu duda o tema...',
+                      border: OutlineInputBorder(),
                     ),
                   ),
                 ),
+                const SizedBox(width: 8),
                 IconButton(
-                  icon: const Icon(Icons.send),
+                  icon: const Icon(Icons.send, color: Colors.teal),
                   onPressed: _sendMessage,
                 ),
               ],

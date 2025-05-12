@@ -32,6 +32,7 @@ dependencies:
     sdk: flutter
   shared_preferences: ^2.0.15
   cupertino_icons: ^1.0.8
+  http: ^0.13.6
 
 
 dev_dependencies:
@@ -53,6 +54,7 @@ flutter:
   assets:
     - assets/images/tutor1.png
     - assets/images/tutor2.png
+    - lib/assets/chatbot_rules.json
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
