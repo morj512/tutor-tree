@@ -277,23 +277,23 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                 const SizedBox(width: 8),
                 // Botón de enviar con efecto
                 AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-  decoration: BoxDecoration(
-    color: _controller.text.trim().isNotEmpty
-        ? Theme.of(context).colorScheme.primary
-        : Theme.of(context).colorScheme.surfaceVariant,
-    shape: BoxShape.circle,
-  ),
-  child: IconButton(
-    icon: Icon(Icons.send,
-        color: _controller.text.trim().isNotEmpty
-            ? Theme.of(context).colorScheme.onPrimary
-            : Theme.of(context).colorScheme.onSurfaceVariant),
-    onPressed: _controller.text.trim().isNotEmpty
-        ? _sendMessage
-        : null,
-  ),
-),
+                                duration: const Duration(milliseconds: 200),
+                decoration: BoxDecoration(
+                  color: _controller.text.trim().isNotEmpty
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.surfaceVariant,
+                  shape: BoxShape.circle,
+                ),
+                child: IconButton(
+                  icon: Icon(Icons.send,
+                      color: _controller.text.trim().isNotEmpty
+                          ? Theme.of(context).colorScheme.onPrimary
+                          : Theme.of(context).colorScheme.onSurfaceVariant),
+                  onPressed: _controller.text.trim().isNotEmpty
+                      ? _sendMessage
+                      : null,
+                ),
+              ),
               ],
             ),
           ),
