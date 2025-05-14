@@ -1,6 +1,6 @@
 // lib/screens/asesor_detail_screen.dart
 import 'package:flutter/material.dart';
-import 'asesores_screen.dart'; // Importamos el modelo Tutor
+import '../models/tutor.dart';
 
 class AsesorDetailScreen extends StatelessWidget {
   final Tutor tutor;
@@ -10,6 +10,7 @@ class AsesorDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: Text(tutor.nombre)),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
