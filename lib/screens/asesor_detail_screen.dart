@@ -1,69 +1,139 @@
 // lib/screens/asesor_detail_screen.dart
 import 'package:flutter/material.dart';
+import 'asesores_screen.dart'; // Importamos el modelo Tutor
 
 class AsesorDetailScreen extends StatelessWidget {
-  final String nombre;
-  final String especialidad;
-  final String descripcion;
-  final String imagen;
+  final Tutor tutor;
 
-  AsesorDetailScreen({
-    required this.nombre,
-    required this.especialidad,
-    required this.descripcion,
-    required this.imagen,
-  });
+  const AsesorDetailScreen({super.key, required this.tutor});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Detalles del Asesor'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Imagen del asesor
-            Center(
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: AssetImage(imagen),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundImage: AssetImage(tutor.imagen),
+                ),
               ),
-            ),
-            SizedBox(height: 16),
-            // Nombre del asesor
-            Text(
-              nombre,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
-            // Especialidad
-            Text(
-              especialidad,
-              style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-            ),
-            SizedBox(height: 16),
-            // Descripción
-            Text(
-              'Descripción:\n$descripcion',
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 20),
-            // Botón de acción (puede ser para iniciar chat, agendar cita, etc.)
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  // Lógica para iniciar el chat, agendar cita, etc.
-                  print('Iniciar chat con $nombre');
-                },
-                child: Text('Iniciar Chat'),
-              ),
-            ),
-          ],
+              const SizedBox(height: 16),
+              _buildTitleSection(tutor.nombre),
+              _buildMetricsSection(tutor.especialidad, tutor.descripcion),
+              _buildRatingSection(),
+              _buildAdditionalMerchantSection(tutor.nombre),
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTitleSection(String nombre) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24.0),
+      child: Text(
+        nombre,
+        style: const TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMetricsSection(String especialidad, String descripcion) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Información del Tutor",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        _buildMetricItem("Especialidad: $especialidad"),
+        _buildMetricItem("Descripción: $descripcion"),
+        _buildMetricItem("Clases disponibles: 12"),
+        _buildMetricItem("Horas de tutoría: 35"),
+      ],
+    );
+  }
+
+  Widget _buildMetricItem(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        children: [
+          const Icon(Icons.circle, size: 8),
+          const SizedBox(width: 8),
+          Flexible(child: Text(text)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRatingSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 16.0),
+          child: Text(
+            "(En general, cómo calificarías al tutor según tu experiencia)",
+            style: TextStyle(fontStyle: FontStyle.italic),
+          ),
+        ),
+        Row(
+          children: const [
+            Icon(Icons.star, color: Colors.amber),
+            Icon(Icons.star, color: Colors.amber),
+            Icon(Icons.star, color: Colors.amber),
+            Icon(Icons.star, color: Colors.amber),
+            Icon(Icons.star_border, color: Colors.grey),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAdditionalMerchantSection(String nombre) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(top: 24.0, bottom: 8.0),
+          child: Text(
+            "Contacto del tutor",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
+            print('Emailar a $nombre');
+          },
+          child: const Text(
+            "Emailar",
+            style: TextStyle(
+              color: Colors.blue,
+              decoration: TextDecoration.underline,
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+        Center(
+          child: ElevatedButton(
+            onPressed: () {
+              print('Iniciar chat con $nombre');
+            },
+            child: const Text('Iniciar Chat'),
+          ),
+        ),
+      ],
     );
   }
 }
