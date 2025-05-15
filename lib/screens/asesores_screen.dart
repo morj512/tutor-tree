@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tutor_tree/models/tutor.dart';
-import 'package:tutor_tree/screens/asesor_detail_screen.dart'; // Asegúrate de importar tu pantalla
+import 'package:tutor_tree/screens/asesor_detail_screen.dart';
 
 class AsesoresScreen extends StatefulWidget {
   @override
@@ -8,10 +8,9 @@ class AsesoresScreen extends StatefulWidget {
 }
 
 class _AsesoresScreenState extends State<AsesoresScreen> {
-  // Lista de tutores con sus materias y calificaciones
   final List<Tutor> todosLosTutores = [
-    // Tutores con calificación más alta
-    Tutor(
+    // ... (tu lista actual de tutores)
+        Tutor(
     nombre: 'María Pérez',
     calificacion: 5.0,
     especialidad: 'Ecuaciones Diferenciales',
@@ -224,7 +223,6 @@ class _AsesoresScreenState extends State<AsesoresScreen> {
   ),
   ];
 
-  // Filtros de categorías de materias
   final List<String> categorias = [
     'Todos',
     'Cálculo',
@@ -236,69 +234,117 @@ class _AsesoresScreenState extends State<AsesoresScreen> {
     'Química',
   ];
 
-final Map<String, Color> categoriaColores = {
-  'Cálculo': Colors.redAccent,
-  'Álgebra': Colors.deepPurpleAccent,
-  'Ecuaciones Diferenciales': Colors.green,
-  'Física': Colors.orangeAccent,
-  'Química': Colors.teal,
-  'Estadística': Colors.blueAccent,
-  'Programación': Colors.indigo,
-  'Otro': Colors.grey,
-};
-
+  final Map<String, Color> categoriaColores = {
+    'Cálculo': Colors.redAccent,
+    'Álgebra': Colors.deepPurpleAccent,
+    'Ecuaciones Diferenciales': Colors.green,
+    'Física': Colors.orangeAccent,
+    'Química': Colors.teal,
+    'Estadística': Colors.blueAccent,
+    'Programación': Colors.indigo,
+  };
 
   String filtroSeleccionado = 'Todos';
+  String busqueda = '';
 
   List<Tutor> get tutoresFiltrados {
-    if (filtroSeleccionado == 'Todos') {
-      return todosLosTutores;
-    } else {
-      return todosLosTutores
-          .where((tutor) => tutor.especialidad == filtroSeleccionado)
-          .toList();
+    List<Tutor> filtrados = todosLosTutores;
+    
+    if (filtroSeleccionado != 'Todos') {
+      filtrados = filtrados.where((tutor) => tutor.especialidad == filtroSeleccionado).toList();
     }
+    
+    if (busqueda.isNotEmpty) {
+      filtrados = filtrados.where((tutor) =>
+          tutor.nombre.toLowerCase().contains(busqueda.toLowerCase()) ||
+          tutor.especialidad.toLowerCase().contains(busqueda.toLowerCase()) ||
+          tutor.descripcion.toLowerCase().contains(busqueda.toLowerCase())).toList();
+    }
+    
+    return filtrados;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Asesores Disponibles')),
+      appBar: AppBar(
+        title: Text('Asesores Disponibles'),
+        elevation: 0,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.blue.shade700, Colors.lightBlue.shade400],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+      ),
       body: Column(
         children: [
-          // Filtro como barra horizontal debajo del AppBar
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: 'Buscar asesores...',
+                prefixIcon: Icon(Icons.search, color: Colors.blue.shade700),
+                filled: true,
+                fillColor: Colors.grey.shade100,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  busqueda = value;
+                });
+              },
+            ),
+          ),
+
           Container(
-            height: 50,
-            padding: const EdgeInsets.symmetric(vertical: 5),
+            height: 60,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: categorias.length,
               itemBuilder: (context, index) {
                 final categoria = categorias[index];
+                final isSelected = filtroSeleccionado == categoria;
+                
                 return GestureDetector(
                   onTap: () {
                     setState(() {
                       filtroSeleccionado = categoria;
                     });
                   },
-                  child: Container(
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    margin: EdgeInsets.symmetric(horizontal: 8),
+                    margin: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
                     decoration: BoxDecoration(
-                      color: filtroSeleccionado == categoria
-                      ? categoriaColores[categoria] ?? Colors.blueAccent
-                      : Colors.grey[300],
-
+                      color: isSelected 
+                          ? categoriaColores[categoria] ?? Colors.blueAccent
+                          : Colors.grey.shade200,
                       borderRadius: BorderRadius.circular(20),
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: (categoriaColores[categoria] ?? Colors.blueAccent).withOpacity(0.4),
+                                blurRadius: 8,
+                                offset: Offset(0, 4),
+                              ),
+                            ]
+                          : null,
                     ),
                     child: Center(
                       child: Text(
                         categoria,
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: filtroSeleccionado == categoria
-                              ? Colors.white
-                              : Colors.black,
+                          fontWeight: FontWeight.w600,
+                          color: isSelected ? Colors.white : Colors.grey.shade800,
                         ),
                       ),
                     ),
@@ -308,40 +354,131 @@ final Map<String, Color> categoriaColores = {
             ),
           ),
 
-          // Lista de tutores
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Row(
+              children: [
+                Text(
+                  '${tutoresFiltrados.length} asesores encontrados',
+                  style: TextStyle(
+                    color: Colors.grey.shade600,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
           Expanded(
             child: ListView.builder(
+              padding: EdgeInsets.only(bottom: 16),
               itemCount: tutoresFiltrados.length,
               itemBuilder: (context, index) {
                 final tutor = tutoresFiltrados[index];
-                return Card(
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundImage: AssetImage(tutor.imagen),
-                    ),
-                    title: Text(tutor.nombre),
-                    subtitle: Text(tutor.especialidad),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: List.generate(5, (i) {
-                        return Icon(
-                          i < tutor.calificacion.round()
-                              ? Icons.star
-                              : Icons.star_border,
-                          color: Colors.yellow,
-                        );
-                      }),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              AsesorDetailScreen(tutor: tutor),
+                final categoriaColor = categoriaColores.entries.firstWhere(
+                  (entry) => tutor.especialidad.contains(entry.key),
+                  orElse: () => MapEntry('Otro', Colors.grey)).value;
+                
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AsesorDetailScreen(tutor: tutor),
+                      ),
+                    );
+                  },
+                  borderRadius: BorderRadius.circular(12),
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 200),
+                    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.1),
+                          blurRadius: 10,
+                          offset: Offset(0, 4),
                         ),
-                      );
-                    },
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: categoriaColor,
+                              width: 2,
+                            ),
+                          ),
+                          child: CircleAvatar(
+                            radius: 30,
+                            backgroundImage: AssetImage(tutor.imagen),
+                          ),
+                        ),
+                        
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  tutor.nombre,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  tutor.especialidad,
+                                  style: TextStyle(
+                                    color: categoriaColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    Icon(Icons.star, 
+                                      color: Colors.amber, 
+                                      size: 18),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      tutor.calificacion.toStringAsFixed(1),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: categoriaColor.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Text(
+                                        'Ver perfil',
+                                        style: TextStyle(
+                                          color: categoriaColor,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
