@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:tutor_tree/screens/asesores_screen.dart';
 import 'package:tutor_tree/screens/cursos_screen.dart';
 import 'package:tutor_tree/screens/chatbot_screen.dart';
+import 'package:tutor_tree/screens/mensajes_tutor.dart';
+import 'package:tutor_tree/screens/horarios_tutor.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -130,30 +132,39 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           },
         ),
         _buildFeatureCard(
-          icon: FontAwesomeIcons.comments,
-          title: 'Mensajes',
+          icon: FontAwesomeIcons.robot,
+          title: 'Chatbot Inteligente',
           color: _softBlue,
           onTap: () {
-            // Navegar a mensajes
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ChatbotScreen()),
+            );
           },
         ),
         _buildFeatureCard(
-          icon: FontAwesomeIcons.calendarCheck,
-          title: 'Horarios',
-          color: _warmBeige,
-          textColor: _darkBrown,
-          onTap: () {
-            // Navegar a horarios
-          },
+        icon: FontAwesomeIcons.comments,
+        title: 'Mensajes',
+        color: _softBlue,
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MensajesTutorScreen()),
+          );
+        },
         ),
         _buildFeatureCard(
-          icon: FontAwesomeIcons.chartLine,
-          title: 'Estadísticas',
-          color: Color(0xFFC6AC8F), // Un tono café claro
-          onTap: () {
-            // Navegar a estadísticas
-          },
-        ),
+        icon: FontAwesomeIcons.calendarCheck,
+        title: 'Horarios',
+        color: _warmBeige,
+        textColor: _darkBrown,
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HorariosTutorScreen()),
+          );
+        },
+      ),
       ],
     );
   }

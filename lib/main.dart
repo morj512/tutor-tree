@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart'; // 👈 Importar esto
 import 'screens/welcome_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // 👈 Necesario para usar async antes del runApp
+  await initializeDateFormatting('es', null); // 👈 Inicializa la localización en español
   runApp(const TutorTreeApp());
 }
 
