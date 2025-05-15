@@ -15,6 +15,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+  // Paleta de colores
+  final Color _primaryGreen = const Color(0xFF8BA888);
+  final Color _lightBeige = const Color(0xFFF5F1E6);
+  final Color _darkBrown = const Color(0xFF5E4B3D);
+  final Color _softBlue = const Color(0xFFA7BED3);
+  final Color _warmBeige = const Color(0xFFD8CCA3);
+  
   late AnimationController _animationController;
   final AudioPlayer _player = AudioPlayer();
   int _selectedIndex = 0;
@@ -63,29 +70,30 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         _buildFeatureCard(
           icon: FontAwesomeIcons.robot,
           title: 'Chatbot Inteligente',
-          color: Colors.blueAccent,
+          color: _softBlue,
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ChatbotScreen()), // Sin 'const'
+              MaterialPageRoute(builder: (context) => ChatbotScreen()),
             );
           },
         ),
         _buildFeatureCard(
           icon: FontAwesomeIcons.chalkboardTeacher,
           title: 'Asesores Disponibles',
-          color: Colors.greenAccent,
+          color: _primaryGreen,
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => AsesoresScreen()), // Sin 'const'
+              MaterialPageRoute(builder: (context) => AsesoresScreen()),
             );
           },
         ),
         _buildFeatureCard(
           icon: FontAwesomeIcons.book,
           title: 'Mis Cursos',
-          color: Colors.orangeAccent,
+          color: _warmBeige,
+          textColor: _darkBrown,
           onTap: () {
             // Navegar a cursos del estudiante
           },
@@ -93,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         _buildFeatureCard(
           icon: FontAwesomeIcons.calendarAlt,
           title: 'Agendar Tutoría',
-          color: Colors.purpleAccent,
+          color: Color(0xFFD4A59A), // Un tono café rosado suave
           onTap: () {
             // Navegar a agenda
           },
@@ -113,18 +121,18 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         _buildFeatureCard(
           icon: FontAwesomeIcons.bookOpen,
           title: 'Mis Cursos',
-          color: Colors.tealAccent,
+          color: _primaryGreen,
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => CursosScreen()), // Sin 'const'
+              MaterialPageRoute(builder: (context) => CursosScreen()),
             );
           },
         ),
         _buildFeatureCard(
           icon: FontAwesomeIcons.comments,
           title: 'Mensajes',
-          color: Colors.pinkAccent,
+          color: _softBlue,
           onTap: () {
             // Navegar a mensajes
           },
@@ -132,7 +140,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         _buildFeatureCard(
           icon: FontAwesomeIcons.calendarCheck,
           title: 'Horarios',
-          color: Colors.amberAccent,
+          color: _warmBeige,
+          textColor: _darkBrown,
           onTap: () {
             // Navegar a horarios
           },
@@ -140,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         _buildFeatureCard(
           icon: FontAwesomeIcons.chartLine,
           title: 'Estadísticas',
-          color: Colors.deepPurpleAccent,
+          color: Color(0xFFC6AC8F), // Un tono café claro
           onTap: () {
             // Navegar a estadísticas
           },
@@ -153,6 +162,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     required IconData icon,
     required String title,
     required Color color,
+    Color textColor = Colors.black54,
     required VoidCallback onTap,
   }) {
     return ScaleTransition(
@@ -163,10 +173,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         ),
       ),
       child: Card(
-        elevation: 4,
+        elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
+        color: _lightBeige,
         child: InkWell(
           borderRadius: BorderRadius.circular(15),
           onTap: () {
@@ -192,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
+                    color: textColor,
                   ),
                 ),
               ],
@@ -203,20 +214,21 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildUserGreeting() {
+Widget _buildUserGreeting() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.indigo.withOpacity(0.1),
+        color: _primaryGreen.withOpacity(0.2),
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: _primaryGreen.withOpacity(0.3)),
       ),
       child: Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 24,
-            backgroundColor: Colors.indigo,
-            child: Icon(Icons.person, color: Colors.white),
+            backgroundColor: _primaryGreen,
+            child: Icon(Icons.person, color: _lightBeige),
           ),
           const SizedBox(width: 16),
           Column(
@@ -226,14 +238,15 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 '¡Hola de nuevo!',
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.grey[600],
+                  color: _darkBrown.withOpacity(0.7),
                 ),
               ),
               Text(
                 widget.userType == 'Estudiante' ? 'Estudiante' : 'Tutor',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
+                  color: _darkBrown,
                 ),
               ),
             ],
@@ -246,12 +259,19 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: _lightBeige,
       appBar: AppBar(
-        title: const Text('Tutor Tree'),
+        title: Text(
+          'Tutor Tree',
+          style: TextStyle(
+            color: _darkBrown,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         elevation: 0,
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.indigo,
         centerTitle: true,
+        iconTheme: IconThemeData(color: _darkBrown),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -264,7 +284,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const [
+        backgroundColor: _lightBeige,
+        items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Inicio',
@@ -279,8 +300,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.indigo,
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: _primaryGreen,
+        unselectedItemColor: _darkBrown.withOpacity(0.6),
         onTap: _onItemTapped,
       ),
     );
