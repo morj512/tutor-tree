@@ -4,6 +4,7 @@ import 'package:tutor_tree/screens/cursos_screen.dart';
 import 'package:tutor_tree/screens/chatbot_screen.dart';
 import 'package:tutor_tree/screens/mensajes_tutor.dart';
 import 'package:tutor_tree/screens/horarios_tutor.dart';
+import 'package:tutor_tree/screens/horarios_estudiantes.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -106,6 +107,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           color: Color(0xFFD4A59A), // Un tono café rosado suave
           onTap: () {
             // Navegar a agenda
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => HorariosEstudianteScreen()),
+            );
           },
         ),
       ],
