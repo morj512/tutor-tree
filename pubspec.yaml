@@ -57,6 +57,10 @@ flutter:
   assets:
     - assets/images/tutor1.png
     - assets/images/tutor2.png
+    - assets/images/tutor3.png
+    - assets/images/tutor4.png
+    - assets/images/tutor5.png
+    - assets/images/tutor6.png
     - assets/images/logo_tutor_tree.png
     - lib/assets/chatbot_rules.json
     - assets/sounds/bienvenido.mp3
