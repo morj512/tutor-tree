@@ -8,7 +8,11 @@ class AsesoresScreen extends StatefulWidget {
 }
 
 class _AsesoresScreenState extends State<AsesoresScreen> {
-  // Colores
+  // Configuración accesibilidad
+  bool _largeFont = false;
+  bool _darkMode = false;
+
+  // Colores originales (modo claro)
   static const Color _verdePrincipal = Color(0xFF4CAF50);
   static const Color _verdeClaro = Color(0xFFC8E6C9);
   static const Color _cafe = Color(0xFF8D6E63);
@@ -16,7 +20,27 @@ class _AsesoresScreenState extends State<AsesoresScreen> {
   static const Color _blanco = Color(0xFFFFF8F0);
   static const Color _cafeOscuro = Color(0xFF5D4037);
 
-  // Lista de tutores (aquí iría tu lista completa de tutores)
+  // Colores para modo oscuro
+  Color get _backgroundColor => _darkMode ? Color(0xFF121212) : _blanco;
+  Color get _appBarColor => _darkMode ? Color(0xFF1E1E1E) : _verdeClaro;
+  Color get _textColor => _darkMode ? Colors.white : _cafeOscuro;
+  Color get _searchBackground => _darkMode ? Color(0xFF2D2D2D) : _beige;
+  Color get _chipBackground => _darkMode ? Color(0xFF333333) : _beige;
+  Color get _cardColor => _darkMode ? Color(0xFF1E1E1E) : Colors.white;
+  Color get _iconColor => _darkMode ? Colors.white70 : _cafe;
+
+  // Estilos de texto dinámicos
+  TextStyle _getTextStyle(bool isTitle, [bool isButton = false]) {
+    return TextStyle(
+      fontSize: _largeFont 
+          ? (isTitle ? 20.0 : 18.0) 
+          : (isTitle ? 16.0 : 14.0),
+      fontWeight: isTitle ? FontWeight.bold : FontWeight.normal,
+      color: _textColor,
+    );
+  }
+
+  // Lista de tutores
   final List<Tutor> todosLosTutores = [
     Tutor(
     nombre: 'Paula Montserrat',
@@ -396,80 +420,37 @@ class _AsesoresScreenState extends State<AsesoresScreen> {
     'Matemáticas Discretas',
   ];
 
-  // Mapeo de categorías con sus subcategorías
+  // Mapeo de categorías con subcategorías
   final Map<String, List<String>> categoriasConSubcategorias = {
-    'Cálculo': [
-      'Cálculo',
-      'Cálculo Integral',
-      'Cálculo Diferencial',
-      'Cálculo Multivariable',
-      'Cálculo Vectorial',
-      'Análisis Matemático'
-    ],
-    'Ecuaciones Diferenciales': [
-      'Ecuaciones Diferenciales',
-      'Ecuaciones Diferenciales Parciales',
-      'Ecuaciones Integrales',
-      'Ecuaciones Estocásticas'
-    ],
-    'Álgebra': [
-      'Álgebra',
-      'Álgebra Lineal',
-      'Álgebra Abstracta',
-      'Teoría de Grupos',
-      'Geometría Algebraica'
-    ],
-    'Física': [
-      'Física',
-      'Física Mecánica',
-      'Física Cuántica',
-      'Física Teórica',
-      'Física Estadística',
-      'Mecánica Analítica',
-      'Relatividad General',
-      'Física de Partículas'
-    ],
-    'Estadística': [
-      'Estadística',
-      'Estadística Inferencial',
-      'Estadística Bayesiana'
-    ],
-    'Probabilidad': [
-      'Probabilidad',
-      'Probabilidad Avanzada',
-      'Probabilidad Discreta',
-      'Teoría de la Medida'
-    ],
-    'Matemáticas Discretas': [
-      'Matemáticas Discretas',
-      'Teoría de Grafos',
-      'Teoría de Números',
-      'Teoría de Juegos',
-      'Lógica Matemática'
-    ],
+    'Cálculo': ['Cálculo', 'Cálculo Integral', 'Cálculo Diferencial'],
+    'Ecuaciones Diferenciales': ['Ecuaciones Diferenciales', 'Ecuaciones Diferenciales Parciales'],
+    'Álgebra': ['Álgebra', 'Álgebra Lineal', 'Álgebra Abstracta'],
+    'Física': ['Física', 'Física Mecánica', 'Física Cuántica'],
+    'Estadística': ['Estadística', 'Estadística Inferencial'],
+    'Probabilidad': ['Probabilidad', 'Probabilidad Avanzada'],
+    'Matemáticas Discretas': ['Matemáticas Discretas', 'Teoría de Grafos'],
   };
 
   // Colores para cada categoría
   final Map<String, Color> categoriaColores = {
-    'Cálculo': Color(0xFF8D6E63), // Café
-    'Álgebra': Color(0xFF689F38), // Verde oscuro
-    'Ecuaciones Diferenciales': Color(0xFF4CAF50), // Verde principal
-    'Física': Color(0xFFF57C00), // Naranja
-    'Matemáticas Discretas': Color(0xFF7E57C2), // Morado
-    'Estadística': Color(0xFF5D4037), // Café oscuro
-    'Probabilidad': Color(0xFF0288D1), // Azul
+    'Cálculo': Color(0xFF8D6E63),
+    'Álgebra': Color(0xFF689F38),
+    'Ecuaciones Diferenciales': _verdePrincipal,
+    'Física': Color(0xFFF57C00),
+    'Matemáticas Discretas': Color(0xFF7E57C2),
+    'Estadística': _cafeOscuro,
+    'Probabilidad': Color(0xFF0288D1),
   };
 
   String filtroSeleccionado = 'Todos';
   String busqueda = '';
 
   List<Tutor> get tutoresFiltrados {
-    List<Tutor> filtrados = todosLosTutores;
+    List<Tutor> filtrados = List.from(todosLosTutores);
     
     if (filtroSeleccionado != 'Todos') {
       final subcategorias = categoriasConSubcategorias[filtroSeleccionado] ?? [];
       filtrados = filtrados.where((tutor) {
-        // Verifica si la especialidad coincide con alguna subcategoría
         return subcategorias.any((subcat) => tutor.especialidad.contains(subcat));
       }).toList();
     }
@@ -484,16 +465,54 @@ class _AsesoresScreenState extends State<AsesoresScreen> {
     return filtrados;
   }
 
+  // Diálogo configuración accesibilidad
+  void _showAccessibilitySettings() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: _darkMode ? Color(0xFF2D2D2D) : _blanco,
+        title: Text('Configuración', style: _getTextStyle(true)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SwitchListTile(
+              title: Text('Texto grande', style: _getTextStyle(false)),
+              value: _largeFont,
+              onChanged: (value) => setState(() => _largeFont = value),
+            ),
+            SwitchListTile(
+              title: Text('Modo oscuro', style: _getTextStyle(false)),
+              value: _darkMode,
+              onChanged: (value) => setState(() => _darkMode = value),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            child: Text('Cerrar', style: _getTextStyle(false, true)),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _blanco,
+      backgroundColor: _backgroundColor,
       appBar: AppBar(
-        title: Text('Asesores Disponibles', 
-          style: TextStyle(color: _cafeOscuro)),
+        title: Text('Asesores Disponibles', style: _getTextStyle(true)),
         elevation: 0,
-        backgroundColor: _verdeClaro,
-        iconTheme: IconThemeData(color: _cafeOscuro),
+        backgroundColor: _appBarColor,
+        iconTheme: IconThemeData(color: _textColor),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.settings_accessibility),
+            onPressed: _showAccessibilitySettings,
+            tooltip: 'Configuración de accesibilidad',
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -502,7 +521,7 @@ class _AsesoresScreenState extends State<AsesoresScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Container(
               decoration: BoxDecoration(
-                color: _beige,
+                color: _searchBackground,
                 borderRadius: BorderRadius.circular(30),
                 boxShadow: [
                   BoxShadow(
@@ -515,10 +534,14 @@ class _AsesoresScreenState extends State<AsesoresScreen> {
               child: TextField(
                 decoration: InputDecoration(
                   hintText: 'Buscar asesores...',
-                  prefixIcon: Icon(Icons.search, color: _cafe),
+                  hintStyle: _getTextStyle(false),
+                  prefixIcon: Icon(Icons.search, color: _iconColor),
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: _largeFont ? 18 : 15, 
+                    horizontal: 20),
                 ),
+                style: _getTextStyle(false),
                 onChanged: (value) => setState(() => busqueda = value),
               ),
             ),
@@ -526,24 +549,25 @@ class _AsesoresScreenState extends State<AsesoresScreen> {
 
           // Filtros de categorías
           Container(
-            height: 60,
+            height: _largeFont ? 70 : 60,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: categorias.length,
               itemBuilder: (context, index) {
                 final categoria = categorias[index];
                 final isSelected = filtroSeleccionado == categoria;
+                final color = categoriaColores[categoria] ?? _verdePrincipal;
                 
                 return Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8),
                   child: ChoiceChip(
                     label: Text(categoria,
-                      style: TextStyle(
-                        color: isSelected ? Colors.white : _cafeOscuro,
+                      style: _getTextStyle(false).copyWith(
+                        color: isSelected ? Colors.white : _textColor,
                       )),
                     selected: isSelected,
-                    selectedColor: categoriaColores[categoria] ?? _verdePrincipal,
-                    backgroundColor: _beige,
+                    selectedColor: color,
+                    backgroundColor: _chipBackground,
                     onSelected: (selected) {
                       setState(() {
                         filtroSeleccionado = selected ? categoria : 'Todos';
@@ -565,104 +589,103 @@ class _AsesoresScreenState extends State<AsesoresScreen> {
               alignment: Alignment.centerLeft,
               child: Text(
                 '${tutoresFiltrados.length} asesores encontrados',
-                style: TextStyle(
-                  color: _cafeOscuro.withOpacity(0.7),
-                  fontSize: 14,
+                style: _getTextStyle(false).copyWith(
+                  color: _textColor.withOpacity(0.7),
                   fontStyle: FontStyle.italic,
                 ),
               ),
             ),
           ),
 
-// Lista de tutores
-Expanded(
-  child: ListView.builder(
-    padding: EdgeInsets.only(bottom: 16),
-    itemCount: tutoresFiltrados.length,
-    itemBuilder: (context, index) {
-      final tutor = tutoresFiltrados[index];
-      final categoriaColor = categoriaColores.entries
-          .firstWhere(
-            (e) => categoriasConSubcategorias[e.key]?.any(
-                  (subcat) => tutor.especialidad.contains(subcat)) ?? false,
-            orElse: () => MapEntry('', _verdePrincipal)).value;
-      
-      return Container(
-        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: _cafe.withOpacity(0.1),
-              blurRadius: 8,
-              offset: Offset(0, 4),
-            ),
-          ],
-        ),
-        child: ListTile(
-          leading: CircleAvatar(
-            backgroundColor: _beige,
-            radius: 30,
-            child: ClipOval(
-              child: Image.asset(
-                tutor.imagen,
-                fit: BoxFit.cover,
-                width: 60,
-                height: 60,
-              ),
-            ),
-          ),
-          title: Text(
-            tutor.nombre,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: _cafeOscuro,
-            ),
-          ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                tutor.especialidad,
-                style: TextStyle(
-                  color: categoriaColor,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              SizedBox(height: 4),
-              Row(
-                children: [
-                  Icon(Icons.star, color: Colors.amber, size: 16),
-                  SizedBox(width: 4),
-                  Text(
-                    tutor.calificacion.toStringAsFixed(1),
-                    style: TextStyle(
-                      color: _cafeOscuro,
-                      fontWeight: FontWeight.bold,
-                    ),
+          // Lista de tutores
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.only(bottom: 16),
+              itemCount: tutoresFiltrados.length,
+              itemBuilder: (context, index) {
+                final tutor = tutoresFiltrados[index];
+                final categoriaColor = categoriaColores.entries
+                    .firstWhere(
+                      (e) => categoriasConSubcategorias[e.key]?.any(
+                            (subcat) => tutor.especialidad.contains(subcat)) ?? false,
+                      orElse: () => MapEntry('', _verdePrincipal)).value;
+                
+                return Container(
+                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: _cardColor,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: _cafe.withOpacity(0.1),
+                        blurRadius: 8,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ],
+                  child: ListTile(
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: _largeFont ? 12 : 8),
+                    leading: CircleAvatar(
+                      backgroundColor: _beige,
+                      radius: _largeFont ? 35 : 30,
+                      child: ClipOval(
+                        child: Image.asset(
+                          tutor.imagen,
+                          fit: BoxFit.cover,
+                          width: _largeFont ? 70 : 60,
+                          height: _largeFont ? 70 : 60,
+                        ),
+                      ),
+                    ),
+                    title: Text(
+                      tutor.nombre,
+                      style: _getTextStyle(true),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          tutor.especialidad,
+                          style: _getTextStyle(false).copyWith(
+                            color: categoriaColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(Icons.star, color: Colors.amber, size: _largeFont ? 20 : 16),
+                            SizedBox(width: 4),
+                            Text(
+                              tutor.calificacion.toStringAsFixed(1),
+                              style: _getTextStyle(false).copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    trailing: Icon(
+                      Icons.chevron_right,
+                      color: _iconColor,
+                      size: _largeFont ? 28 : 24,
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AsesorDetailScreen(tutor: tutor),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
           ),
-          trailing: Icon(
-            Icons.chevron_right,
-            color: _cafe,
-          ),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AsesorDetailScreen(tutor: tutor),
-              ),
-            );
-          },
-        ),
-      );
-    },
-  ),
-),
         ],
       ),
     );
