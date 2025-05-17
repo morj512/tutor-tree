@@ -677,7 +677,11 @@ class _AsesoresScreenState extends State<AsesoresScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => AsesorDetailScreen(tutor: tutor),
+                          builder: (context) => AsesorDetailScreen(
+                            tutor: tutor,  // Usa la variable 'tutor' del itemBuilder
+                            darkMode: _darkMode,
+                            largeFont: _largeFont,
+                          ),
                         ),
                       );
                     },

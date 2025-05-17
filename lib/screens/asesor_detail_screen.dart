@@ -3,12 +3,47 @@ import '../models/tutor.dart';
 
 class AsesorDetailScreen extends StatelessWidget {
   final Tutor tutor;
-  final Color _primaryColor = const Color(0xFF4A6B3D); // Verde oscuro
-  final Color _secondaryColor = const Color(0xFF8B5A2B); // Café
-  final Color _accentColor = const Color(0xFFD2B48C); // Beige
-  final Color _backgroundColor = const Color(0xFFF5F5F0); // Beige claro
+  final bool darkMode;
+  final bool largeFont;
+  
+  // Colores para modo claro
+  final Color _primaryColorLight = const Color(0xFF4A6B3D);
+  final Color _secondaryColorLight = const Color(0xFF8B5A2B);
+  final Color _accentColorLight = const Color(0xFFD2B48C);
+  final Color _backgroundColorLight = const Color(0xFFF5F5F0);
+  
+  // Colores para modo oscuro
+  final Color _primaryColorDark = const Color(0xFF8BA888);
+  final Color _secondaryColorDark = const Color(0xFFD7CCC8);
+  final Color _accentColorDark = const Color(0xFF5D4037);
+  final Color _backgroundColorDark = const Color(0xFF121212);
 
-  const AsesorDetailScreen({super.key, required this.tutor});
+  const AsesorDetailScreen({
+    super.key, 
+    required this.tutor,
+    required this.darkMode,
+    required this.largeFont,
+  });
+
+  // Getters para colores dinámicos
+  Color get primaryColor => darkMode ? _primaryColorDark : _primaryColorLight;
+  Color get secondaryColor => darkMode ? _secondaryColorDark : _secondaryColorLight;
+  Color get accentColor => darkMode ? _accentColorDark : _accentColorLight;
+  Color get backgroundColor => darkMode ? _backgroundColorDark : _backgroundColorLight;
+  Color get textColor => darkMode ? Colors.white : Colors.black87;
+  Color get cardColor => darkMode ? const Color(0xFF1E1E1E) : Colors.white;
+
+  // Estilos de texto dinámicos
+  TextStyle getTextStyle(bool isTitle, [bool isButton = false]) {
+    return TextStyle(
+      fontSize: largeFont 
+          ? (isTitle ? 22.0 : 18.0) 
+          : (isTitle ? 18.0 : 14.0),
+      fontWeight: isTitle ? FontWeight.bold : FontWeight.normal,
+      color: textColor,
+      height: 1.5,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,11 +51,18 @@ class AsesorDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           tutor.nombre,
-          style: TextStyle(color: Colors.white),
+          style: getTextStyle(true).copyWith(color: Colors.white),
         ),
-        backgroundColor: _primaryColor,
+        backgroundColor: primaryColor,
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.settings_accessibility, size: largeFont ? 28 : 24),
+            onPressed: () => _showAccessibilityOptions(context),
+            tooltip: 'Opciones de accesibilidad',
+          ),
+        ],
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -28,22 +70,18 @@ class AsesorDetailScreen extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              _primaryColor.withOpacity(0.1),
-              _backgroundColor.withOpacity(0.3),
-              _backgroundColor,
+              primaryColor.withOpacity(0.1),
+              backgroundColor.withOpacity(0.3),
+              backgroundColor,
             ],
           ),
         ),
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Sección superior con foto y datos básicos
               _buildProfileHeader(context),
-              // Sección de información detallada
               _buildInfoSection(),
-              // Sección de calificación
               _buildRatingSection(),
-              // Sección de contacto y acciones
               _buildContactSection(context),
             ],
           ),
@@ -54,18 +92,19 @@ class AsesorDetailScreen extends StatelessWidget {
 
   Widget _buildProfileHeader(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(largeFont ? 24 : 20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardColor,
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(30),
           bottomRight: Radius.circular(30),
         ),
         boxShadow: [
           BoxShadow(
-            color: _primaryColor.withOpacity(0.1),
+            color: primaryColor.withOpacity(0.1),
             blurRadius: 10,
             spreadRadius: 5,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -77,61 +116,56 @@ class AsesorDetailScreen extends StatelessWidget {
               Container(
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: _accentColor,
+                    color: accentColor,
                     width: 3,
                   ),
                   shape: BoxShape.circle,
                 ),
                 child: CircleAvatar(
-                  radius: 60,
+                  radius: largeFont ? 70 : 60,
                   backgroundImage: AssetImage(tutor.imagen),
                 ),
               ),
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: _primaryColor,
+                  color: primaryColor,
                   shape: BoxShape.circle,
                   border: Border.all(
                     color: Colors.white,
                     width: 2,
                   ),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.verified,
                   color: Colors.white,
-                  size: 20,
+                  size: largeFont ? 24 : 20,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: largeFont ? 20 : 16),
           Text(
             tutor.nombre,
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: _primaryColor,
-            ),
+            style: getTextStyle(true).copyWith(color: primaryColor),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: largeFont ? 8 : 4),
           Text(
             tutor.especialidad,
-            style: TextStyle(
-              fontSize: 16,
-              color: _secondaryColor,
+            style: getTextStyle(false).copyWith(
+              color: secondaryColor,
               fontStyle: FontStyle.italic,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: largeFont ? 12 : 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.location_on, color: _secondaryColor, size: 16),
-              const SizedBox(width: 4),
+              Icon(Icons.location_on, color: secondaryColor, size: largeFont ? 20 : 16),
+              SizedBox(width: largeFont ? 8 : 4),
               Text(
                 "Disponible en línea",
-                style: TextStyle(color: _secondaryColor),
+                style: getTextStyle(false).copyWith(color: secondaryColor),
               ),
             ],
           ),
@@ -142,29 +176,22 @@ class AsesorDetailScreen extends StatelessWidget {
 
   Widget _buildInfoSection() {
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(largeFont ? 24 : 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             "Sobre ${tutor.nombre.split(' ')[0]}",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: _primaryColor,
-            ),
+            style: getTextStyle(true).copyWith(color: primaryColor),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: largeFont ? 16 : 12),
           Text(
             tutor.descripcion,
-            style: const TextStyle(
-              fontSize: 16,
-              height: 1.5,
-            ),
+            style: getTextStyle(false),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: largeFont ? 28 : 24),
           _buildStatsRow(),
-          const SizedBox(height: 24),
+          SizedBox(height: largeFont ? 28 : 24),
           _buildSkillsSection(),
         ],
       ),
@@ -173,12 +200,12 @@ class AsesorDetailScreen extends StatelessWidget {
 
   Widget _buildStatsRow() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(largeFont ? 20 : 16),
       decoration: BoxDecoration(
-        color: _accentColor.withOpacity(0.2),
+        color: accentColor.withOpacity(0.2),
         borderRadius: BorderRadius.circular(15),
         border: Border.all(
-          color: _accentColor.withOpacity(0.3),
+          color: accentColor.withOpacity(0.3),
         ),
       ),
       child: Row(
@@ -187,7 +214,7 @@ class AsesorDetailScreen extends StatelessWidget {
           _buildStatItem("12", "Clases"),
           _buildStatItem("35", "Horas"),
           _buildStatItem("24", "Estudiantes"),
-          _buildStatItem("4.8", "Rating"),
+          _buildStatItem(tutor.calificacion.toStringAsFixed(1), "Rating"),
         ],
       ),
     );
@@ -198,18 +225,11 @@ class AsesorDetailScreen extends StatelessWidget {
       children: [
         Text(
           value,
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: _primaryColor,
-          ),
+          style: getTextStyle(true).copyWith(color: primaryColor),
         ),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 14,
-            color: _secondaryColor,
-          ),
+          style: getTextStyle(false).copyWith(color: secondaryColor),
         ),
       ],
     );
@@ -221,13 +241,9 @@ class AsesorDetailScreen extends StatelessWidget {
       children: [
         Text(
           "Habilidades",
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: _primaryColor,
-          ),
+          style: getTextStyle(true).copyWith(color: primaryColor),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: largeFont ? 16 : 12),
         Wrap(
           spacing: 8,
           runSpacing: 8,
@@ -247,33 +263,34 @@ class AsesorDetailScreen extends StatelessWidget {
     return Chip(
       label: Text(
         skill,
-        style: TextStyle(color: _primaryColor),
+        style: getTextStyle(false).copyWith(color: primaryColor),
       ),
-      backgroundColor: _accentColor.withOpacity(0.3),
+      backgroundColor: accentColor.withOpacity(0.3),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: _accentColor),
+        side: BorderSide(color: accentColor),
       ),
     );
   }
 
   Widget _buildRatingSection() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.symmetric(horizontal: largeFont ? 24 : 20),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(largeFont ? 20 : 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: cardColor,
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.1),
               blurRadius: 10,
               spreadRadius: 5,
+              offset: const Offset(0, 2),
             ),
           ],
           border: Border.all(
-            color: _accentColor.withOpacity(0.3),
+            color: accentColor.withOpacity(0.3),
           ),
         ),
         child: Column(
@@ -284,59 +301,57 @@ class AsesorDetailScreen extends StatelessWidget {
               children: [
                 Text(
                   "Calificación",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: _primaryColor,
-                  ),
+                  style: getTextStyle(true).copyWith(color: primaryColor),
                 ),
                 Row(
                   children: [
                     Text(
-                      "4.8",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: _secondaryColor,
-                      ),
+                      tutor.calificacion.toStringAsFixed(1),
+                      style: getTextStyle(true).copyWith(color: secondaryColor),
                     ),
-                    const SizedBox(width: 4),
-                    const Icon(Icons.star, color: Colors.amber, size: 20),
+                    SizedBox(width: largeFont ? 8 : 4),
+                    Icon(Icons.star, color: Colors.amber, size: largeFont ? 24 : 20),
                   ],
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: largeFont ? 16 : 12),
             LinearProgressIndicator(
-              value: 0.8,
-              minHeight: 8,
+              value: tutor.calificacion / 5,
+              minHeight: largeFont ? 10 : 8,
               borderRadius: BorderRadius.circular(10),
-              valueColor: AlwaysStoppedAnimation<Color>(_primaryColor),
-              backgroundColor: _accentColor.withOpacity(0.3),
+              valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+              backgroundColor: accentColor.withOpacity(0.3),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: largeFont ? 12 : 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text("5 estrellas (80%)"),
-                Text("24 reseñas"),
+              children: [
+                Text(
+                  "5 estrellas (${(tutor.calificacion * 20).toInt()}%)",
+                  style: getTextStyle(false),
+                ),
+                Text(
+                  "24 reseñas",
+                  style: getTextStyle(false),
+                ),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: largeFont ? 20 : 16),
             Text(
               "¿Cómo fue tu experiencia con ${tutor.nombre.split(' ')[0]}?",
-              style: TextStyle(
+              style: getTextStyle(false).copyWith(
                 fontStyle: FontStyle.italic,
-                color: _secondaryColor,
+                color: secondaryColor,
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: largeFont ? 16 : 8),
             Row(
               children: List.generate(5, (index) {
                 return Icon(
-                  index < 4 ? Icons.star : Icons.star_border,
+                  index < tutor.calificacion.floor() ? Icons.star : Icons.star_border,
                   color: Colors.amber,
-                  size: 30,
+                  size: largeFont ? 36 : 30,
                 );
               }),
             ),
@@ -348,66 +363,54 @@ class AsesorDetailScreen extends StatelessWidget {
 
   Widget _buildContactSection(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(largeFont ? 24 : 20),
       child: Column(
         children: [
           Text(
             "Contacta a ${tutor.nombre.split(' ')[0]}",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: _primaryColor,
-            ),
+            style: getTextStyle(true).copyWith(color: primaryColor),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: largeFont ? 20 : 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildContactButton(
                 icon: Icons.email,
-                color: _secondaryColor,
-                onPressed: () {
-                  _showContactDialog(context, "Email");
-                },
+                label: "Email",
+                color: secondaryColor,
+                onPressed: () => _showContactDialog(context, "Email"),
               ),
               _buildContactButton(
                 icon: Icons.phone,
-                color: _primaryColor,
-                onPressed: () {
-                  _showContactDialog(context, "Teléfono");
-                },
+                label: "Llamar",
+                color: primaryColor,
+                onPressed: () => _showContactDialog(context, "Teléfono"),
               ),
               _buildContactButton(
                 icon: Icons.video_call,
+                label: "Video",
                 color: Colors.green,
-                onPressed: () {
-                  _showContactDialog(context, "Videollamada");
-                },
+                onPressed: () => _showContactDialog(context, "Videollamada"),
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: largeFont ? 28 : 24),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: _primaryColor,
+                backgroundColor: primaryColor,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                padding: EdgeInsets.symmetric(vertical: largeFont ? 20 : 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
                 elevation: 3,
               ),
-              onPressed: () {
-                _showConfirmationDialog(context);
-              },
-              child: const Text(
+              onPressed: () => _showConfirmationDialog(context),
+              child: Text(
                 'Reservar Sesión',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: getTextStyle(true).copyWith(color: Colors.white),
               ),
             ),
           ),
@@ -418,66 +421,116 @@ class AsesorDetailScreen extends StatelessWidget {
 
   Widget _buildContactButton({
     required IconData icon,
+    required String label,
     required Color color,
     required VoidCallback onPressed,
   }) {
-    return InkWell(
-  onTap: () {
-    // Acción cuando se toca el ícono
-    print("Ícono tocado");
-  },
-  child: Container(
-    padding: EdgeInsets.all(8),
-    decoration: BoxDecoration(
-      color: Colors.blue, // o cualquier color que uses
-      shape: BoxShape.circle,
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.1),
-          blurRadius: 5,
-          offset: Offset(0, 2),
+    return Column(
+      children: [
+        Container(
+          width: largeFont ? 60 : 50,
+          height: largeFont ? 60 : 50,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 5,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: IconButton(
+            icon: Icon(icon, color: Colors.white, size: largeFont ? 28 : 24),
+            onPressed: onPressed,
+          ),
+        ),
+        SizedBox(height: largeFont ? 8 : 4),
+        Text(
+          label,
+          style: getTextStyle(false),
         ),
       ],
-    ),
-    child: Icon(
-      Icons.star, // el ícono que quieras mostrar
-      color: Colors.white,
-      size: 24,
-    ),
-  ),
-);
+    );
+  }
 
+  void _showAccessibilityOptions(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: cardColor,
+        title: Text('Configuración', style: getTextStyle(true)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SwitchListTile(
+              title: Text('Texto grande', style: getTextStyle(false)),
+              value: largeFont,
+              onChanged: (value) {
+                Navigator.pop(context);
+                // Deberías manejar este cambio en el estado padre
+              },
+            ),
+            SwitchListTile(
+              title: Text('Modo oscuro', style: getTextStyle(false)),
+              value: darkMode,
+              onChanged: (value) {
+                Navigator.pop(context);
+                // Deberías manejar este cambio en el estado padre
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            child: Text('Cerrar', style: getTextStyle(false, true)),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showContactDialog(BuildContext context, String method) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Contactar por $method"),
+        backgroundColor: cardColor,
+        title: Text(
+          "Contactar por $method",
+          style: getTextStyle(true),
+        ),
         content: Text(
-            "¿Deseas contactar a ${tutor.nombre} por $method?\n\n${method == "Email" ? "tutor.email@example.com" : method == "Teléfono" ? "+52 55 1234 5678" : "Iniciar videollamada"}"),
+          "¿Deseas contactar a ${tutor.nombre} por $method?\n\n${method == "Email" ? "tutor.email@example.com" : method == "Teléfono" ? "+52 55 1234 5678" : "Iniciar videollamada"}",
+          style: getTextStyle(false),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
               "Cancelar",
-              style: TextStyle(color: _secondaryColor),
+              style: getTextStyle(false, true).copyWith(color: secondaryColor),
             ),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: _primaryColor,
+              backgroundColor: primaryColor,
             ),
             onPressed: () {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text("Conectando con ${tutor.nombre} por $method..."),
-                  backgroundColor: _primaryColor,
+                  backgroundColor: primaryColor,
+                  behavior: SnackBarBehavior.floating,
                 ),
               );
             },
-            child: const Text("Confirmar"),
+            child: Text(
+              "Confirmar",
+              style: getTextStyle(false, true).copyWith(color: Colors.white),
+            ),
           ),
         ],
       ),
@@ -488,31 +541,41 @@ class AsesorDetailScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Confirmar Reservación"),
-        content: const Text("¿Deseas reservar una sesión con este tutor?"),
+        backgroundColor: cardColor,
+        title: Text(
+          "Confirmar Reservación",
+          style: getTextStyle(true),
+        ),
+        content: Text(
+          "¿Deseas reservar una sesión con este tutor?",
+          style: getTextStyle(false),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
               "Cancelar",
-              style: TextStyle(color: _secondaryColor),
+              style: getTextStyle(false, true).copyWith(color: secondaryColor),
             ),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: _primaryColor,
+              backgroundColor: primaryColor,
             ),
             onPressed: () {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text("Sesión reservada con ${tutor.nombre}!"),
-                  backgroundColor: _primaryColor,
+                  backgroundColor: primaryColor,
                   behavior: SnackBarBehavior.floating,
                 ),
               );
             },
-            child: const Text("Confirmar"),
+            child: Text(
+              "Confirmar",
+              style: getTextStyle(false, true).copyWith(color: Colors.white),
+            ),
           ),
         ],
       ),
